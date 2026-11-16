@@ -10,33 +10,115 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuditoriaRouteImport } from './routes/auditoria'
+import { Route as CarteiraRouteImport } from './routes/carteira'
+import { Route as QuantRouteImport } from './routes/quant'
+import { Route as RelatoriosRouteImport } from './routes/relatorios'
+import { Route as ResearchRouteImport } from './routes/research'
+import { Route as RiscoRouteImport } from './routes/risco'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuditoriaRoute = AuditoriaRouteImport.update({
+  id: '/auditoria',
+  path: '/auditoria',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarteiraRoute = CarteiraRouteImport.update({
+  id: '/carteira',
+  path: '/carteira',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuantRoute = QuantRouteImport.update({
+  id: '/quant',
+  path: '/quant',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RelatoriosRoute = RelatoriosRouteImport.update({
+  id: '/relatorios',
+  path: '/relatorios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResearchRoute = ResearchRouteImport.update({
+  id: '/research',
+  path: '/research',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RiscoRoute = RiscoRouteImport.update({
+  id: '/risco',
+  path: '/risco',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auditoria': typeof AuditoriaRoute
+  '/carteira': typeof CarteiraRoute
+  '/quant': typeof QuantRoute
+  '/relatorios': typeof RelatoriosRoute
+  '/research': typeof ResearchRoute
+  '/risco': typeof RiscoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auditoria': typeof AuditoriaRoute
+  '/carteira': typeof CarteiraRoute
+  '/quant': typeof QuantRoute
+  '/relatorios': typeof RelatoriosRoute
+  '/research': typeof ResearchRoute
+  '/risco': typeof RiscoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auditoria': typeof AuditoriaRoute
+  '/carteira': typeof CarteiraRoute
+  '/quant': typeof QuantRoute
+  '/relatorios': typeof RelatoriosRoute
+  '/research': typeof ResearchRoute
+  '/risco': typeof RiscoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auditoria'
+    | '/carteira'
+    | '/quant'
+    | '/relatorios'
+    | '/research'
+    | '/risco'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auditoria'
+    | '/carteira'
+    | '/quant'
+    | '/relatorios'
+    | '/research'
+    | '/risco'
+  id:
+    | '__root__'
+    | '/'
+    | '/auditoria'
+    | '/carteira'
+    | '/quant'
+    | '/relatorios'
+    | '/research'
+    | '/risco'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuditoriaRoute: typeof AuditoriaRoute
+  CarteiraRoute: typeof CarteiraRoute
+  QuantRoute: typeof QuantRoute
+  RelatoriosRoute: typeof RelatoriosRoute
+  ResearchRoute: typeof ResearchRoute
+  RiscoRoute: typeof RiscoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +130,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auditoria': {
+      id: '/auditoria'
+      path: '/auditoria'
+      fullPath: '/auditoria'
+      preLoaderRoute: typeof AuditoriaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/carteira': {
+      id: '/carteira'
+      path: '/carteira'
+      fullPath: '/carteira'
+      preLoaderRoute: typeof CarteiraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quant': {
+      id: '/quant'
+      path: '/quant'
+      fullPath: '/quant'
+      preLoaderRoute: typeof QuantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/relatorios': {
+      id: '/relatorios'
+      path: '/relatorios'
+      fullPath: '/relatorios'
+      preLoaderRoute: typeof RelatoriosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/research': {
+      id: '/research'
+      path: '/research'
+      fullPath: '/research'
+      preLoaderRoute: typeof ResearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/risco': {
+      id: '/risco'
+      path: '/risco'
+      fullPath: '/risco'
+      preLoaderRoute: typeof RiscoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuditoriaRoute: AuditoriaRoute,
+  CarteiraRoute: CarteiraRoute,
+  QuantRoute: QuantRoute,
+  RelatoriosRoute: RelatoriosRoute,
+  ResearchRoute: ResearchRoute,
+  RiscoRoute: RiscoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
