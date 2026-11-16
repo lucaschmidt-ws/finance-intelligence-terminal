@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/research")({
   validateSearch: (s: Record<string, unknown>): { ticker?: string } =>
-    typeof s.ticker === "string" && s.ticker ? { ticker: s.ticker } : {},
+    typeof s["ticker"] === "string" && s["ticker"] ? { ticker: s["ticker"] } : {},
   head: () => ({
     meta: [
       { title: "Research — Finance Intelligence" },

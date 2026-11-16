@@ -26,7 +26,7 @@ const tooltipStyle = { background: "var(--panel-2)", border: "1px solid var(--bo
 function Dashboard() {
   const [period, setPeriod] = useState<keyof typeof PERIODS>("6M");
   const series = useMemo(() => performanceSeries(PERIODS[period]), [period]);
-  const periodRet = series[series.length - 1].carteira / series[0].carteira - 1;
+  const periodRet = series[series.length - 1]!.carteira / series[0]!.carteira - 1;
 
   return (
     <div className="mx-auto max-w-7xl">

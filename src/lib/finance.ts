@@ -47,7 +47,7 @@ export function annualizedVol(returns: number[], periodsPerYear: number) {
 export function maxDrawdown(curve: number[]) {
   if (curve.length < 2) throw new Error("Informe ao menos 2 pontos da curva.");
   if (curve.some((v) => v <= 0)) throw new Error("Valores da curva devem ser positivos.");
-  let peak = curve[0], mdd = 0, peakIdx = 0, troughIdx = 0, curPeakIdx = 0;
+  let peak = curve[0]!, mdd = 0, peakIdx = 0, troughIdx = 0, curPeakIdx = 0;
   curve.forEach((v, i) => {
     if (v > peak) { peak = v; curPeakIdx = i; }
     const dd = D(v).minus(peak).div(peak).toNumber();
@@ -93,18 +93,19 @@ export interface Fundamentals {
 }
 export function fundamentalMetrics(f: Fundamentals) {
   const last = f.revenue.length - 1;
+  const g = (a: number[], i: number) => a[i] as number;
   const mcap = D(f.price).times(f.shares);
-  const ni = D(f.netIncome[last]);
+  const ni = D(g(f.netIncome, last));
   return {
     marketCap: mcap.toNumber(),
     pe: mcap.div(ni).toNumber(),
-    pb: mcap.div(f.equity[last]).toNumber(),
-    roe: ni.div(f.equity[last]).toNumber(),
+    pb: mcap.div(g(f.equity, last)).toNumber(),
+    roe: ni.div(g(f.equity, last)).toNumber(),
     dy: D(f.dps).div(f.price).toNumber(),
-    netDebtEbitda: D(f.netDebt[last]).div(f.ebitda[last]).toNumber(),
-    revenueGrowth: D(f.revenue[last]).div(f.revenue[last - 1]).minus(1).toNumber(),
-    netIncomeGrowth: ni.div(f.netIncome[last - 1]).minus(1).toNumber(),
-    netMargin: ni.div(f.revenue[last]).toNumber(),
-    ebitdaMargin: D(f.ebitda[last]).div(f.revenue[last]).toNumber(),
+    netDebtEbitda: D(g(f.netDebt, last)).div(g(f.ebitda, last)).toNumber(),
+    revenueGrowth: D(g(f.revenue, last)).div(g(f.revenue, last - 1)).minus(1).toNumber(),
+    netIncomeGrowth: ni.div(g(f.netIncome, last - 1)).minus(1).toNumber(),
+    netMargin: ni.div(g(f.revenue, last)).toNumber(),
+    ebitdaMargin: D(g(f.ebitda, last)).div(g(f.revenue, last)).toNumber(),
   };
 }
