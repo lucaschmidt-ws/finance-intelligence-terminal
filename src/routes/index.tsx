@@ -3,7 +3,10 @@ import { useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, Cell, Line, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { ArrowUpRight } from "lucide-react";
 import { DemoTag, PageHeader, Panel, Stat } from "@/components/fi/primitives";
-import { ALLOCATION, DASH_KPIS, RESEARCH_ACTIVITY, UNIVERSE, performanceSeries } from "@/lib/data";
+import { DASH_KPIS, RESEARCH_ACTIVITY, SAMPLE_HOLDINGS, UNIVERSE, performanceSeries } from "@/lib/data";
+import { portfolioSummary } from "@/lib/portfolio-store";
+
+const ALLOCATION = portfolioSummary(SAMPLE_HOLDINGS).allocation.map((a) => ({ name: a.name, value: Math.round(a.weight * 1000) / 10 }));
 import { fmtBRL, fmtNum, fmtPct, tone } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -86,7 +89,7 @@ function Dashboard() {
             {ALLOCATION.map((a, i) => (
               <li key={a.name} className="flex items-center justify-between text-sm">
                 <span className="flex items-center gap-2 text-muted-foreground"><span className="size-2 rounded-sm" style={{ background: CHART_COLORS[i] }} />{a.name}</span>
-                <span className="num text-foreground">{a.value}%</span>
+                <span className="num text-foreground">{fmtNum(a.value, 1)}%</span>
               </li>
             ))}
           </ul>

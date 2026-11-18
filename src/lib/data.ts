@@ -36,7 +36,18 @@ export const DATASET_META = {
   createdAt: "2026-01-15T09:00:00-03:00",
   updatedAt: "2026-11-10T18:00:00-03:00",
   liveFeed: false,
+  /** Câmbio USD/BRL SIMULADO, usado apenas para converter ativos em USD na carteira demo. */
+  fxUsdBrl: 5.45,
 };
+
+export const FX_DEMO = DATASET_META.fxUsdBrl;
+
+export const DATASETS = [
+  { id: DATASET_META.id, name: "Universo de ativos e cotações ilustrativas", source: DATASET_META.source, classification: "SIMULADO", updatedAt: DATASET_META.updatedAt },
+  { id: "DEMO-ALPHA-FIN-2024-2026", name: "Demonstrações ALPHA S.A. (fictícia)", source: "Construído para fins educacionais", classification: "FICTÍCIO", updatedAt: DATASET_META.updatedAt },
+  { id: "DEMO-PORTFOLIO-01", name: "Carteira modelo de exemplo", source: "Gerado internamente", classification: "SIMULADO", updatedAt: DATASET_META.updatedAt },
+  { id: "DEMO-FX-USDBRL", name: `Câmbio USD/BRL fixo (${DATASET_META.fxUsdBrl})`, source: "Parâmetro de demonstração", classification: "SIMULADO", updatedAt: DATASET_META.updatedAt },
+];
 
 export const ALPHA = {
   name: "ALPHA S.A.",
@@ -53,7 +64,7 @@ export const ALPHA = {
 };
 
 export const DASH_KPIS = {
-  patrimonio: 248650,
+  get patrimonio() { return SAMPLE_TOTAL; },
   retorno: 0.0842,
   vol: 0.128,
   mdd: -0.063,
@@ -96,13 +107,22 @@ export const RESEARCH_ACTIVITY = [
 ];
 
 export interface Holding { id: string; ticker: string; cls: AssetClass; qty: number; avgCost: number; price: number; }
+/** Preço em BRL: ativos em USD convertidos pelo câmbio simulado FX_DEMO. */
+export const priceBRL = (ticker: string) => {
+  const a = UNIVERSE.find((x) => x.ticker === ticker);
+  if (!a) return undefined;
+  return a.currency === "USD" ? Math.round(a.price * FX_DEMO * 100) / 100 : a.price;
+};
+const h = (id: string, ticker: string, cls: AssetClass, qty: number, avgCost: number, price?: number): Holding =>
+  ({ id, ticker, cls, qty, avgCost, price: price ?? priceBRL(ticker)! });
 export const SAMPLE_HOLDINGS: Holding[] = [
-  { id: "h1", ticker: "PETR4", cls: "Ações BR", qty: 900, avgCost: 31.8, price: 37.42 },
-  { id: "h2", ticker: "ITUB4", cls: "Ações BR", qty: 1000, avgCost: 30.2, price: 34.9 },
-  { id: "h3", ticker: "VALE3", cls: "Ações BR", qty: 300, avgCost: 66.5, price: 61.15 },
-  { id: "h4", ticker: "HGLG11", cls: "FIIs", qty: 310, avgCost: 152.4, price: 158.2 },
-  { id: "h5", ticker: "BOVA11", cls: "ETFs", qty: 300, avgCost: 118.9, price: 124.3 },
-  { id: "h6", ticker: "AAPL", cls: "Internacional", qty: 30, avgCost: 1050, price: 1245.6 },
-  { id: "h7", ticker: "BTC", cls: "Cripto", qty: 0.07, avgCost: 310000, price: 366700 },
-  { id: "h8", ticker: "TESOURO IPCA+", cls: "Renda fixa", qty: 4, avgCost: 3000, price: 3105 },
+  h("h1", "PETR4", "Ações BR", 900, 31.8),
+  h("h2", "ITUB4", "Ações BR", 1000, 30.2),
+  h("h3", "VALE3", "Ações BR", 300, 66.5),
+  h("h4", "HGLG11", "FIIs", 310, 152.4),
+  h("h5", "BOVA11", "ETFs", 300, 118.9),
+  h("h6", "AAPL", "Internacional", 30, 1050),
+  h("h7", "BTC", "Cripto", 0.07, 310000),
+  h("h8", "TESOURO IPCA+", "Renda fixa", 4, 3000, 3105),
 ];
+export const SAMPLE_TOTAL = Math.round(SAMPLE_HOLDINGS.reduce((a, x) => a + x.qty * x.price, 0) * 100) / 100;

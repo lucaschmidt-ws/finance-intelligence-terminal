@@ -11,7 +11,7 @@ export function parseSeries(input: string): { values: number[]; errors: string[]
   if (!raw) return { values: [], errors: ["Nenhum valor informado."] };
   // If there are newlines or semicolons, treat commas as decimal separators.
   const tokens = /[\n;]/.test(raw)
-    ? raw.split(/[\n;]+/).map((t) => t.trim().replace(/\s/g, "").replace(",", "."))
+    ? raw.split(/[\n;]+/).map((t) => { const c = t.trim().replace(/\s/g, ""); return c.includes(",") ? c.replace(/\./g, "").replace(",", ".") : c; })
     : raw.split(/[,\s]+/).map((t) => t.trim());
   const values: number[] = [];
   tokens.filter(Boolean).forEach((t, i) => {
@@ -29,6 +29,7 @@ export function simpleReturn(initial: number, final: number) {
 }
 
 export function mean(xs: number[]) {
+  if (xs.length === 0) throw new Error("Série vazia.");
   return xs.reduce((a, x) => a.plus(x), D(0)).div(xs.length).toNumber();
 }
 
@@ -70,6 +71,7 @@ export interface TradeStats {
   avgGain: number; avgLoss: number; costPerTrade: number;
 }
 export function tradeMetrics(s: TradeStats) {
+  if ([s.trades, s.wins, s.losses].some((n) => n < 0 || !Number.isInteger(n))) throw new Error("Contagens devem ser inteiros ≥ 0.");
   if (s.wins + s.losses !== s.trades) throw new Error("Ganhos + perdas deve ser igual ao total de operações.");
   if (s.trades <= 0) throw new Error("Total de operações deve ser maior que zero.");
   const grossProfit = D(s.wins).times(s.avgGain);
@@ -79,11 +81,12 @@ export function tradeMetrics(s: TradeStats) {
   const net = gross.minus(costs);
   const winRate = D(s.wins).div(s.trades);
   const expectancy = net.div(s.trades);
+  const payoff = s.avgLoss === 0 || s.losses === 0 ? null : D(s.avgGain).div(Math.abs(s.avgLoss)).toNumber();
   const profitFactor = grossLoss.isZero() ? null : grossProfit.div(grossLoss).toNumber();
   return {
     grossProfit: grossProfit.toNumber(), grossLoss: grossLoss.toNumber(),
     gross: gross.toNumber(), costs: costs.toNumber(), net: net.toNumber(),
-    winRate: winRate.toNumber(), expectancy: expectancy.toNumber(), profitFactor,
+    winRate: winRate.toNumber(), expectancy: expectancy.toNumber(), profitFactor, payoff,
   };
 }
 
@@ -108,4 +111,26 @@ export function fundamentalMetrics(f: Fundamentals) {
     netMargin: ni.div(g(f.revenue, last)).toNumber(),
     ebitdaMargin: D(g(f.ebitda, last)).div(g(f.revenue, last)).toNumber(),
   };
+}
+
+/** Periodic simple returns from an equity curve. */
+export function returnsFromCurve(curve: number[]) {
+  if (curve.length < 2) throw new Error("Informe ao menos 2 pontos da curva.");
+  return curve.slice(1).map((v, i) => simpleReturn(curve[i]!, v));
+}
+
+/** Curve from initial capital and periodic returns (compounded). */
+export function curveFromReturns(initial: number, returns: number[]) {
+  const out = [initial];
+  let v = D(initial);
+  returns.forEach((r) => { v = v.times(D(1).plus(r)); out.push(v.toNumber()); });
+  return out;
+}
+
+export function compoundGrowth(initial: number, ratePerPeriod: number, periods: number, contribution = 0) {
+  if (periods < 0 || !Number.isInteger(periods)) throw new Error("Número de períodos deve ser inteiro ≥ 0.");
+  let v = D(initial); const simple = D(initial).times(D(1).plus(D(ratePerPeriod).times(periods)));
+  const path = [v.toNumber()];
+  for (let i = 0; i < periods; i++) { v = v.times(D(1).plus(ratePerPeriod)).plus(contribution); path.push(v.toNumber()); }
+  return { final: v.toNumber(), simpleFinal: simple.toNumber(), path };
 }
