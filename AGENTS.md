@@ -28,3 +28,4 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+- Financial formulas live as pure functions in src/lib/finance.ts with tests in finance.test.ts; pages only call them, so every number stays auditable.

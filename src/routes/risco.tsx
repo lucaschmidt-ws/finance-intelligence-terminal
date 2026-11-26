@@ -58,11 +58,11 @@ function Page() {
           <div className="space-y-3">
             <Segmented label="Tipo" value={mode} onChange={setMode} options={[{ v: "curve", l: "Curva (valores)" }, { v: "returns", l: "Retornos (%)" }]} />
             <TextArea aria-label="Série" rows={10} value={text} onChange={(e) => setText(e.target.value)} />
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid gap-3">
               <Field label="Periodicidade"><Segmented label="Periodicidade" value={ppy} onChange={setPpy} options={[{ v: "252", l: "Diária" }, { v: "52", l: "Semanal" }, { v: "12", l: "Mensal" }]} /></Field>
               <Field label="Livre de risco a.a. (%)" hint="Parâmetro editável"><Input value={rf} onChange={(e) => setRf(e.target.value)} /></Field>
             </div>
-            <Btn onClick={() => { setMode("curve"); setText(demoCurve()); }}>Usar série demo (semanal, 26 semanas)</Btn>
+            <Btn onClick={() => { setMode("curve"); setText(demoCurve()); }}>Usar série demo (semanal, 36 semanas)</Btn>
           </div>
         </Panel>
         <div className="space-y-4 lg:col-span-2">
